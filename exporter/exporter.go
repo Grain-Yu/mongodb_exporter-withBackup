@@ -170,8 +170,6 @@ func (e *Exporter) makeRegistry(ctx context.Context, client *mongo.Client, topol
 		e.opts.EnableTopMetrics = true
 		e.opts.EnableReplicasetStatus = true
 		e.opts.EnableIndexStats = true
-		e.opts.EnableBackupStatus = true
-
 	}
 
 	// arbiter only have isMaster privileges

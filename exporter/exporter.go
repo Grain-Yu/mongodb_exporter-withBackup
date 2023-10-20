@@ -68,6 +68,7 @@ type Opts struct {
 	EnableTopMetrics       bool
 	EnableIndexStats       bool
 	EnableCollStats        bool
+	EnableBackupStatus     bool
 
 	EnableOverrideDescendingIndex bool
 
@@ -169,6 +170,8 @@ func (e *Exporter) makeRegistry(ctx context.Context, client *mongo.Client, topol
 		e.opts.EnableTopMetrics = true
 		e.opts.EnableReplicasetStatus = true
 		e.opts.EnableIndexStats = true
+		e.opts.EnableBackupStatus = true
+
 	}
 
 	// arbiter only have isMaster privileges
@@ -290,6 +293,8 @@ func (e *Exporter) Handler() http.Handler {
 				requestOpts.EnableIndexStats = true
 			case "collstats":
 				requestOpts.EnableCollStats = true
+			case "backupstatus":
+				requestOpts.EnableBackupStatus = true
 			}
 		}
 

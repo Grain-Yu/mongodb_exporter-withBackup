@@ -224,6 +224,13 @@ func (e *Exporter) makeRegistry(ctx context.Context, client *mongo.Client, topol
 		registry.MustRegister(rsgsc)
 	}
 
+	// 
+	if e.opts.EnableBackupStatus && requestOpts.EnableBackupStatus {
+		bsc := newBackupStatusCollector(ctx, client, e.opts.Logger,
+			e.opts.CompatibleMode, topologyInfo)
+		registry.MustRegister(bsc)
+	}
+	
 	return registry
 }
 

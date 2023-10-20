@@ -54,32 +54,37 @@ func (d *backupStatusCollector) Collect(ch chan<- prometheus.Metric) {
 }
 
 func (d *backupStatusCollector) collect(ch chan<- prometheus.Metric) {
-	defer measureCollectTime(ch, "mongodb", "backupstatus")()
+	defer prometheus.MeasureCollectTime(ch, "mongodb", "backupstatus")()
 
 	logger := d.base.logger
+	prefix := ""
 
-	var m bson.M
+	var m float64
 	var delblank string
     filename := "/tmp/mongodbBakStatus.txt"
     content, err := os.ReadFile(filename)
     if err != nil {
-		m = bson.M{"10000"}
-		ch <- prometheus.NewInvalidMetric(prometheus.NewInvalidDesc(err), err)
+		m = 10000
+		logger.Debug("backupStatus result:")
+		debugResult(logger, m)
+		for _, metric := range makeMetrics(prefix, bson.M{"backupStatus": m}, d.topologyInfo.baseLabels(), d.compatibleMode) {
+			ch <- metric
+		}
 		return
 	}
 
 	delblank = strings.Replace(string(content), " ", "", -1)
     delnewline, _ := strconv.ParseFloat(strings.Replace(delblank,"\n", "", -1), 64)
 	if delnewline == 1 {
-        m = bson.M{"1"}
+        m = 1
     } else {
-		m = bson.M{"0"}
+		m = 0
 	}	
 
 	logger.Debug("backupStatus result:")
 	debugResult(logger, m)
 
-	for _, metric := range makeMetrics("", bson.M{"backupStatus": m}, d.topologyInfo.baseLabels(), d.compatibleMode) {
+	for _, metric := range makeMetrics(prefix, bson.M{"backupStatus": m}, d.topologyInfo.baseLabels(), d.compatibleMode) {
 		ch <- metric
 	}
 }

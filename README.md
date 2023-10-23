@@ -1,3 +1,8 @@
+# 添加了对于备份状态的监控
+首先，在备份脚本中添加判断备份是否成功的逻辑：成功向/tmp/mongodbBakStatus.txt中echo 1，失败向/tmp/mongodbBakStatus.txt中echo 0，
+运行mongodb_exporter时需指定 --collector.backupstatus标志: mongodb_exporter xxxx --collector.backupstatus 
+注意即使以--collect-all运行，仍要加--collector.backupstatus.
+对应的metric指标为mongodb_backupStatus. 返回值及含义：0-Failed 1-Normal 10000-读取/tmp/mongodbBakStatus.txt文件失败
 # MongoDB exporter
 [![Release](https://img.shields.io/github/release/percona/mongodb_exporter.svg?style=flat)](https://github.com/percona/mongodb_exporter/releases/latest)
 [![Build Status](https://github.com/percona/mongodb_exporter/actions/workflows/go.yml/badge.svg?branch=main)](https://github.com/percona/mongodb_exporter/actions/workflows/go.yml?query=branch%3Amain)
